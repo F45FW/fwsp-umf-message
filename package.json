@@ -1,6 +1,6 @@
 {
   "name": "fwsp-umf-message",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "umf-message: a tool for creating and working with UMF style messages",
   "author": "Carlos Justiniano",
   "analyze": false,

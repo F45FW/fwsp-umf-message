@@ -2,7 +2,7 @@
 
 const moment = require('moment');
 const uuid = require('uuid');
-const Utils = require('@flywheelsports/jsutils');
+const Utils = require('fwsp-jsutils');
 
 const UMF_VERSION = 'UMF/1.4.2';
 const UMF_INVALID_MESSAGE = 'UMF message requires "to", "from" and "body" fields';
