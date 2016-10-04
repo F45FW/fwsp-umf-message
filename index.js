@@ -115,7 +115,7 @@ class UMFMessage {
       instance = urlRoute.substring(0, atPos);
       urlRoute = urlRoute.substring(atPos + 1);
       let segments = instance.split('-');
-      if (segments > 0) {
+      if (segments.length > 0) {
         instance = segments[0];
         subID = segments[1];
       }
