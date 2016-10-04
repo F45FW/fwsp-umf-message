@@ -4,7 +4,7 @@ const moment = require('moment');
 const uuid = require('uuid');
 const Utils = require('fwsp-jsutils');
 
-const UMF_VERSION = 'UMF/1.4.2';
+const UMF_VERSION = 'UMF/1.4.3';
 const UMF_INVALID_MESSAGE = 'UMF message requires "to", "from" and "body" fields';
 
 class UMFMessage {
@@ -108,11 +108,17 @@ class UMFMessage {
     let error;
     let urlRoute = toValue;
     let instance = '';
+    let subID = '';
 
     let atPos = urlRoute.indexOf('@');
     if (atPos > -1) {
       instance = urlRoute.substring(0, atPos);
       urlRoute = urlRoute.substring(atPos + 1);
+      let segments = instance.split('-');
+      if (segments > 0) {
+        instance = segments[0];
+        subID = segments[1];
+      }
     }
 
     let segments = urlRoute.split(':');
@@ -145,6 +151,7 @@ class UMFMessage {
     }
     return {
       instance,
+      subID,
       serviceName,
       httpMethod,
       apiRoute,
