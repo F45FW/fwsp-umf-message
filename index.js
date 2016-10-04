@@ -103,7 +103,7 @@ class UMFMessage {
    */
   parseRoute(toValue) {
     let serviceName = '';
-    let httpMethod = 'post';
+    let httpMethod;
     let apiRoute = '';
     let error;
     let urlRoute = toValue;
