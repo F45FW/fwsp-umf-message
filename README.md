@@ -69,6 +69,30 @@ $ npm test
   createMessage(message, shortFormat=false)
 ```
 
+### messageToShort - convert a long message to a short one
+
+```javascript
+/**
+* @name messageToShort
+* @summary convert a long message to a short one
+* @param {object} message - message to be converted
+* @return {object} converted message
+*/
+messageToShort(message)
+```
+
+### messageToLong - convert a short message to a long one
+
+```javascript
+/**
+* @name messageToLong
+* @summary convert a short message to a long one
+* @param {object} message - message to be converted
+* @return {object} converted message
+*/
+messageToLong(message)
+```
+
 ### validateMessage - Validates that a UMF message has required fields
 
 ```javascript
@@ -107,4 +131,3 @@ $ npm test
    */
   parseRoute(toValue)
 ```
-

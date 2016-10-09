@@ -4,9 +4,6 @@ require('./helpers/chai.js');
 
 const UMFMessage = require('../index.js');
 
-/**
-* Test createMessage
-*/
 describe('createMessage', () => {
   it('should return an object when given an empty message', () => {
     let msg = UMFMessage.createMessage({});
@@ -25,6 +22,33 @@ describe('createMessage', () => {
     expect(msg).to.have.property('mid');
     expect(msg).to.have.property('ts');
     expect(msg).to.have.property('ver');
+  });
+});
+
+describe('message conversion to and from short form', () => {
+  it('should convert a short form message to a long form message', () => {
+    let msg = UMFMessage.createMessage({
+      to: 'someservice:/',
+      frm: 'tester',
+      bdy: {
+        val: 'some value'
+      }
+    }, true);
+    let longFormMessage = UMFMessage.messageToLong(msg);
+    expect(longFormMessage).to.have.property('from');
+    expect(longFormMessage).to.have.property('body');
+  });
+  it('should convert a long form message to a short form message', () => {
+    let msg = UMFMessage.createMessage({
+      to: 'someservice:/',
+      from: 'tester',
+      body: {
+        val: 'some value'
+      }
+    });
+    let shortFormMessage = UMFMessage.messageToShort(msg);
+    expect(shortFormMessage).to.have.property('frm');
+    expect(shortFormMessage).to.have.property('bdy');
   });
 });
 
@@ -60,7 +84,7 @@ describe('validateMessage', () => {
 });
 
 describe('parseRoute', () => {
-  let instanceID = 'fa1ae8d5-86fc-44af-aad8-cd2740aef041';
+  let instanceID = 'fa1ae8d586fc44afaad8cd2740aef041';
   let msg = UMFMessage.createMessage({
     to: `${instanceID}@test-service:[GET]/v1/somedata`,
     from: 'client:/',

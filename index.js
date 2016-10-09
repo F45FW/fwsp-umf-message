@@ -69,6 +69,46 @@ class UMFMessage {
   }
 
   /**
+  * @name messageToShort
+  * @summary convert a long message to a short one
+  * @param {object} message - message to be converted
+  * @return {object} converted message
+  */
+  messageToShort(message) {
+    let convertedMessage = {};
+    (message.to) && (convertedMessage.to = message.to);
+    (message.from) && (convertedMessage.frm = message.from);
+    (message.mid) && (convertedMessage.mid = message.mid);
+    (message.rmid) && (convertedMessage.rmid = message.rmid);
+    (message.timestamp) && (convertedMessage.ts = message.timestamp);
+    (message.version) && (convertedMessage.ver = message.version);
+    (message.via) && (convertedMessage.via = message.via);
+    (message['for']) && (convertedMessage['for'] = message['for']);
+    (message.body) && (convertedMessage.bdy = message.body);
+    return convertedMessage;
+  }
+
+  /**
+  * @name messageToLong
+  * @summary convert a short message to a long one
+  * @param {object} message - message to be converted
+  * @return {object} converted message
+  */
+  messageToLong(message) {
+    let convertedMessage = {};
+    (message.to) && (convertedMessage.to = message.to);
+    (message.frm) && (convertedMessage.from = message.frm);
+    (message.mid) && (convertedMessage.mid = message.mid);
+    (message.rmid) && (convertedMessage.rmid = message.rmid);
+    (message.ts) && (convertedMessage.timestamp = message.ts);
+    (message.ver) && (convertedMessage.version = message.ver);
+    (message.via) && (convertedMessage.via = message.via);
+    (message['for']) && (convertedMessage['for'] = message['for']);
+    (message.bdy) && (convertedMessage.body = message.bdy);
+    return convertedMessage;
+  }
+
+  /**
   * @name validateMessage
   * @summary Validates that a UMF message has required fields
   * @param {object} message - UMF formatted message
@@ -120,7 +160,6 @@ class UMFMessage {
         subID = segments[1];
       }
     }
-
     let segments = urlRoute.split(':');
     if (segments.length < 1) {
       error = 'route field has invalid number of routable segments';
