@@ -78,23 +78,24 @@ class UMFMessage {
       }, message || {});
     }
     return new Proxy(msg, {
-      get: (obj, name) => {
-        if (shortFormat && name in longToShort) {
-          return obj[longToShort[name]];
-        } else if (!shortFormat && name in shortToLong) {
-          return obj[shortToLong[name]];
+      get: (obj, prop) => {
+        if (shortFormat && prop in longToShort) {
+          return obj[longToShort[prop]];
+        } else if (!shortFormat && prop in shortToLong) {
+          return obj[shortToLong[prop]];
         } else {
-          return obj[name];
+          return obj[prop];
         }
       },
       set: (obj, prop, value) => {
-        if (shortFormat && name in longToShort) {
+        if (shortFormat && prop in longToShort) {
           obj[longToShort[prop]] = value;
-        } else if (!shortFormat && name in shortToLong) {
+        } else if (!shortFormat && prop in shortToLong) {
           obj[shortToLong[prop]] = value;
         } else {
-          obj[name] = value;
+          obj[prop] = value;
         }
+        return true;
       }
     });
   }
