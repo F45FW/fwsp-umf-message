@@ -7,6 +7,18 @@ const Utils = require('fwsp-jsutils');
 const UMF_VERSION = 'UMF/1.4.3';
 const UMF_INVALID_MESSAGE = 'UMF message requires "to", "from" and "body" fields';
 
+const shortToLong = {
+  frm: 'from',
+  ts: 'timestamp',
+  ver: 'version',
+  bdy: 'body'
+}, longToShort = {
+  from: 'frm',
+  timestamp: 'ts',
+  version: 'ver',
+  body: 'bdy'
+};
+
 class UMFMessage {
   constructor() {
   }
@@ -65,7 +77,46 @@ class UMFMessage {
         ver: UMF_VERSION
       }, message || {});
     }
-    return msg;
+    return new Proxy(msg, {
+      get: (obj, name) => {
+        if (shortFormat && name in longToShort) {
+          return obj[longToShort[name]];
+        } else if (!shortFormat && name in shortToLong) {
+          return obj[shortToLong[name]];
+        } else {
+          return obj[name];
+        }
+      },
+      set: (obj, prop, value) => {
+        if (shortFormat && name in longToShort) {
+          obj[longToShort[prop]] = value;
+        } else if (!shortFormat && name in shortToLong) {
+          obj[shortToLong[prop]] = value;
+        } else {
+          obj[name] = value;
+        }
+      }
+    });
+  }
+
+  /**
+  * @name messageToObject
+  * @param {object} message - message to be converted
+  * @return {object} unproxied message object
+  */
+  messageToObject(message) {
+    let ret = {};
+    Object.keys(message).forEach(k => ret[k] = message[k]);
+    return ret;
+  }
+
+  /**
+  * @name messageToJSON
+  * @param {object} message - message to be converted
+  * @return {string} JSON version of message
+  */
+  messageToJSON(message) {
+    return Utils.safeJSONStringify(this.messageToObject(message));
   }
 
   /**

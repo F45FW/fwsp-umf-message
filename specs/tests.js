@@ -2,6 +2,7 @@
 
 require('./helpers/chai.js');
 
+const Utils = require('fwsp-jsutils');
 const UMFMessage = require('../index.js');
 
 describe('createMessage', () => {
@@ -111,6 +112,63 @@ describe('parseRoute', () => {
   it('should parse api route', () => {
     let result = UMFMessage.parseRoute(msg.to);
     expect(result.apiRoute).to.be.equal('/v1/somedata');
+  });
+});
+
+describe('proxied object', () => {
+  it('should return values for long-form keys on short-form message ', () => {
+    let msg = UMFMessage.createMessage({
+      to: 'someservice:/',
+      frm: 'tester',
+      bdy: {
+        val: 'some value'
+      }
+    }, true);
+    expect(msg.frm).to.equal(msg.from);
+    expect(msg.bdy).to.equal(msg.body);
+    expect(msg.ts).to.equal(msg.timestamp);
+    expect(msg.ver).to.equal(msg.version);
+  });
+
+  it('should return values for short-form keys on long-form message', () => {
+    let msg = UMFMessage.createMessage({
+      to: 'someservice:/',
+      from: 'tester',
+      body: {
+        val: 'some value'
+      }
+    }, false);
+    expect(msg.from).to.equal(msg.frm);
+    expect(msg.body).to.equal(msg.bdy);
+    expect(msg.timestamp).to.equal(msg.ts);
+    expect(msg.version).to.equal(msg.ver);
+  });
+});
+
+describe('messageToJSON', () => {
+  it('should return long-form keys in JSON for a long-form message', () => {
+    let msg = UMFMessage.createMessage({
+      to: 'someservice:/',
+      from: 'tester',
+      body: {
+        val: 'some value'
+      }
+    }, false);
+    let json = UMFMessage.messageToJSON(msg);
+    let parsed = Utils.safeJSONParse(json);
+    expect(parsed).to.have.property('from');
+  });
+  it('should return short-form keys in JSON for a short-form message', () => {
+    let msg = UMFMessage.createMessage({
+      to: 'someservice:/',
+      frm: 'tester',
+      bdy: {
+        val: 'some value'
+      }
+    }, true);
+    let json = UMFMessage.messageToJSON(msg);
+    let parsed = Utils.safeJSONParse(json);
+    expect(parsed).to.have.property('frm');
   });
 
 });
