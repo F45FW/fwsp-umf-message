@@ -30,6 +30,8 @@ $ npm test
 
 ## API
 
+See: [API documentation](api.md)
+
 ### createMessageID - Returns a UUID for use with messages
 
 ```javascript
@@ -69,28 +71,62 @@ $ npm test
   createMessage(message, shortFormat=false)
 ```
 
-### messageToShort - convert a long message to a short one
+### createMessageShort - Create a short-format UMF message
 
 ```javascript
 /**
-* @name messageToShort
+* @name createMessageShort
+* @summary createMessage with short fields
+* @param {object} message - optional message overrides.
+* @return {object} message - a UMF formatted short-form message.
+*/
+createMessageShort(message)
+```
+
+### toObject - get message as Object (no Proxy)
+
+```javascript
+/**
+* @name toObject
+* @param {object} message - message to be converted
+* @return {object} unproxied message object
+*/
+toObject(message)
+```
+
+### toJSON - serialize message to JSON string
+
+```javascript
+/**
+* @name toJSON
+* @param {object} message - message to be converted
+* @return {string} JSON version of message
+*/
+toJSON(message)
+```
+
+### toShort - convert a long message to a short one
+
+```javascript
+/**
+* @name toShort
 * @summary convert a long message to a short one
 * @param {object} message - message to be converted
 * @return {object} converted message
 */
-messageToShort(message)
+toShort(message)
 ```
 
-### messageToLong - convert a short message to a long one
+### toLong - convert a short message to a long one
 
 ```javascript
 /**
-* @name messageToLong
+* @name toLong
 * @summary convert a short message to a long one
 * @param {object} message - message to be converted
 * @return {object} converted message
 */
-messageToLong(message)
+toLong(message)
 ```
 
 ### validateMessage - Validates that a UMF message has required fields
