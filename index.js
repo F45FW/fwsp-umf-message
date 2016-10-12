@@ -59,38 +59,24 @@ class UMFMessage {
   *              "to", "from" and "body" are provided either before or after using
   *              this function.
   * @param {object} message - optional message overrides.
-  * @param {boolean} shortFormat - optional flag to use UMF short form syntax.
+  * @param {boolean} [shortFormat=false] - optional flag to use UMF short form syntax.
   * @return {object} message - a UMF formatted message.
   */
   createMessage(message, shortFormat=false) {
-    let msg;
-    if (shortFormat === false) {
-      msg = Object.assign({
-        mid: this.createMessageID(),
-        timestamp: this._getTimeStamp(),
-        version: UMF_VERSION
-      }, message || {});
-    } else {
-      msg = Object.assign({
-        mid: this.createShortMessageID(),
-        ts: this._getTimeStamp(),
-        ver: UMF_VERSION
-      }, message || {});
+    if (shortFormat) {
+      return this.createMessageShort(message);
     }
+    let msg = Object.assign({
+      mid: this.createMessageID(),
+      timestamp: this._getTimeStamp(),
+      version: UMF_VERSION
+    }, message || {});
     return new Proxy(msg, {
       get: (obj, prop) => {
-        if (shortFormat && prop in longToShort) {
-          return obj[longToShort[prop]];
-        } else if (!shortFormat && prop in shortToLong) {
-          return obj[shortToLong[prop]];
-        } else {
-          return obj[prop];
-        }
+        return prop in shortToLong ? obj[shortToLong[prop]] : obj[prop];
       },
       set: (obj, prop, value) => {
-        if (shortFormat && prop in longToShort) {
-          obj[longToShort[prop]] = value;
-        } else if (!shortFormat && prop in shortToLong) {
+        if (prop in shortToLong) {
           obj[shortToLong[prop]] = value;
         } else {
           obj[prop] = value;
@@ -101,32 +87,59 @@ class UMFMessage {
   }
 
   /**
-  * @name messageToObject
+  * @name createMessageShort
+  * @summary createMessage with short fields
+  * @param {object} message - optional message overrides.
+  * @return {object} message - a UMF formatted short-form message.
+  */
+  createMessageShort(message) {
+    let msg = Object.assign({
+      mid: this.createShortMessageID(),
+      ts: this._getTimeStamp(),
+      ver: UMF_VERSION
+    }, message || {});
+    return new Proxy(msg, {
+      get: (obj, prop) => {
+        return prop in longToShort ? obj[longToShort[prop]] : obj[prop];
+      },
+      set: (obj, prop, value) => {
+        if (prop in longToShort) {
+          obj[longToShort[prop]] = value;
+        } else {
+          obj[prop] = value;
+        }
+        return true;
+      }
+    });
+  }
+
+  /**
+  * @name toObject
   * @param {object} message - message to be converted
   * @return {object} unproxied message object
   */
-  messageToObject(message) {
+  toObject(message) {
     let ret = {};
     Object.keys(message).forEach(k => ret[k] = message[k]);
     return ret;
   }
 
   /**
-  * @name messageToJSON
+  * @name toJSON
   * @param {object} message - message to be converted
   * @return {string} JSON version of message
   */
-  messageToJSON(message) {
-    return Utils.safeJSONStringify(this.messageToObject(message));
+  toJSON(message) {
+    return Utils.safeJSONStringify(this.toObject(message));
   }
 
   /**
-  * @name messageToShort
+  * @name toShort
   * @summary convert a long message to a short one
   * @param {object} message - message to be converted
   * @return {object} converted message
   */
-  messageToShort(message) {
+  toShort(message) {
     let convertedMessage = {};
     (message.to) && (convertedMessage.to = message.to);
     (message.from) && (convertedMessage.frm = message.from);
@@ -141,12 +154,12 @@ class UMFMessage {
   }
 
   /**
-  * @name messageToLong
+  * @name toLong
   * @summary convert a short message to a long one
   * @param {object} message - message to be converted
   * @return {object} converted message
   */
-  messageToLong(message) {
+  toLong(message) {
     let convertedMessage = {};
     (message.to) && (convertedMessage.to = message.to);
     (message.frm) && (convertedMessage.from = message.frm);
