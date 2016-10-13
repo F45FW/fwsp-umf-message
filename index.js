@@ -127,7 +127,7 @@ class UMFMessage {
   * @return {object} converted message
   */
   messageToShort(message) {
-    let convertedMessage = {};
+    let convertedMessage = Object.assign({}, message);
     (message.to) && (convertedMessage.to = message.to);
     (message.from) && (convertedMessage.frm = message.from);
     (message.mid) && (convertedMessage.mid = message.mid);
@@ -147,7 +147,7 @@ class UMFMessage {
   * @return {object} converted message
   */
   messageToLong(message) {
-    let convertedMessage = {};
+    let convertedMessage = Object.assign({}, message);
     (message.to) && (convertedMessage.to = message.to);
     (message.frm) && (convertedMessage.from = message.frm);
     (message.mid) && (convertedMessage.mid = message.mid);
