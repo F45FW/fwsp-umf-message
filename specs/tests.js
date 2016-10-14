@@ -130,38 +130,4 @@ describe('toJSON', () => {
     let parsed = Utils.safeJSONParse(json);
     expect(parsed).to.have.property('from');
   });
-
-});
-
-describe('get message body', () => {
-  let longMsg = UMFMessage.createMessage({
-    to: 'someservice:/',
-    from: 'tester',
-    body: {
-      val: 'some value'
-    }
-  }),
-  shortMsg = UMFMessage.createMessageShort({
-    to: 'someservice:/',
-    frm: 'tester',
-    bdy: {
-      val: 'some value'
-    }
-  });
-  it('should get message body from long-form message', () => {
-    let body = UMFMessage.getMessageBody(longMsg);
-    expect(body).to.have.property('val');
-  });
-  it('should get message body from converted short-form message', () => {
-    let body = UMFMessage.getMessageBody(UMFMessage.toShort(longMsg));
-    expect(body).to.have.property('val');
-  });
-  it('should get message body from new short-form message', () => {
-    let body = UMFMessage.getMessageBody(shortMsg);
-    expect(body).to.have.property('val');
-  });
-  it('should get message body from converted long-form message', () => {
-    let body = UMFMessage.getMessageBody(UMFMessage.toLong(shortMsg));
-    expect(body).to.have.property('val');
-  });
 });
