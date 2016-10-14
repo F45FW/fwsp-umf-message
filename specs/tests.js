@@ -38,6 +38,8 @@ describe('message conversion to and from short form', () => {
     let longFormMessage = UMFMessage.toLong(msg);
     expect(longFormMessage).to.have.property('from');
     expect(longFormMessage).to.have.property('body');
+    expect(longFormMessage).not.to.have.property('frm');
+    expect(longFormMessage).not.to.have.property('bdy');
   });
   it('should convert a long form message to a short form message', () => {
     let msg = UMFMessage.createMessage({
@@ -50,6 +52,8 @@ describe('message conversion to and from short form', () => {
     let shortFormMessage = UMFMessage.toShort(msg);
     expect(shortFormMessage).to.have.property('frm');
     expect(shortFormMessage).to.have.property('bdy');
+    expect(shortFormMessage).not.to.have.property('from');
+    expect(shortFormMessage).not.to.have.property('body');
   });
 });
 
@@ -171,4 +175,37 @@ describe('toJSON', () => {
     expect(parsed).to.have.property('frm');
   });
 
+});
+
+describe('get message body', () => {
+  let longMsg = UMFMessage.createMessage({
+    to: 'someservice:/',
+    from: 'tester',
+    body: {
+      val: 'some value'
+    }
+  }),
+  shortMsg = UMFMessage.createMessageShort({
+    to: 'someservice:/',
+    frm: 'tester',
+    bdy: {
+      val: 'some value'
+    }
+  });
+  it('should get message body from long-form message', () => {
+    let body = UMFMessage.getMessageBody(longMsg);
+    expect(body).to.have.property('val');
+  });
+  it('should get message body from converted short-form message', () => {
+    let body = UMFMessage.getMessageBody(UMFMessage.toShort(longMsg));
+    expect(body).to.have.property('val');
+  });
+  it('should get message body from new short-form message', () => {
+    let body = UMFMessage.getMessageBody(shortMsg);
+    expect(body).to.have.property('val');
+  });
+  it('should get message body from converted long-form message', () => {
+    let body = UMFMessage.getMessageBody(UMFMessage.toLong(shortMsg));
+    expect(body).to.have.property('val');
+  });
 });
