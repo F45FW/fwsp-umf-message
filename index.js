@@ -141,12 +141,15 @@ class UMFMessage {
   */
   toShort(message) {
     let convertedMessage = Object.assign({}, message);
-    Object.keys(longToShort).forEach(longField => {
-      if (longField in convertedMessage) {
-        convertedMessage[longToShort[longField]] = message[longField];
-        delete convertedMessage[longField];
-      }
-    });
+    (message.to) && (convertedMessage.to = message.to);
+    (message.from) && (convertedMessage.frm = message.from);
+    (message.mid) && (convertedMessage.mid = message.mid);
+    (message.rmid) && (convertedMessage.rmid = message.rmid);
+    (message.timestamp) && (convertedMessage.ts = message.timestamp);
+    (message.version) && (convertedMessage.ver = message.version);
+    (message.via) && (convertedMessage.via = message.via);
+    (message['for']) && (convertedMessage['for'] = message['for']);
+    (message.body) && (convertedMessage.bdy = message.body);
     return convertedMessage;
   }
 
@@ -158,12 +161,15 @@ class UMFMessage {
   */
   toLong(message) {
     let convertedMessage = Object.assign({}, message);
-    Object.keys(shortToLong).forEach(shortField => {
-      if (shortField in convertedMessage) {
-        convertedMessage[shortToLong[shortField]] = message[shortField];
-        delete convertedMessage[shortField];
-      }
-    });
+    (message.to) && (convertedMessage.to = message.to);
+    (message.frm) && (convertedMessage.from = message.frm);
+    (message.mid) && (convertedMessage.mid = message.mid);
+    (message.rmid) && (convertedMessage.rmid = message.rmid);
+    (message.ts) && (convertedMessage.timestamp = message.ts);
+    (message.ver) && (convertedMessage.version = message.ver);
+    (message.via) && (convertedMessage.via = message.via);
+    (message['for']) && (convertedMessage['for'] = message['for']);
+    (message.bdy) && (convertedMessage.body = message.bdy);
     return convertedMessage;
   }
 
@@ -188,7 +194,7 @@ class UMFMessage {
   * @return {object} body - UMF message body
   */
   getMessageBody(message) {
-    return Object.assign({}, message.body || message.bdy);
+    return Object.assign({}, message.body);
   }
 
   /**
