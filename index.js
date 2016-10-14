@@ -7,29 +7,27 @@ const Utils = require('fwsp-jsutils');
 const UMF_VERSION = 'UMF/1.4.3';
 const UMF_INVALID_MESSAGE = 'UMF message requires "to", "from" and "body" fields';
 
-const shortToLong = {
-  frm: 'from',
-  ts: 'timestamp',
-  ver: 'version',
-  bdy: 'body'
-}, longToShort = {
-  from: 'frm',
-  timestamp: 'ts',
-  version: 'ver',
-  body: 'bdy'
-};
 
 class UMFMessage {
   constructor() {
+    this.message = {};
   }
 
   /**
-  * @name _getTimeStamp
+  * @name getMessage
+  * @summary Returns a plain-old JavaScript object
+  * @return {object} obj - a Plain old JavaScript Object.
+  */
+  getMessage() {
+    return Object.assign({}, this.message);
+  }
+
+  /**
+  * @name getTimeStamp
   * @summary retrieve an ISO 8601 timestamp
-  * @private
   * @return {string} timestamp - ISO 8601 timestamp
   */
-  _getTimeStamp() {
+  getTimeStamp() {
     return moment().toISOString();
   }
 
@@ -51,78 +49,6 @@ class UMFMessage {
     return Utils.shortID();
   }
 
-  /**
-  * @name createMessage
-  * @summary Create a UMF style message.
-  * @description This is a helper function which helps format a UMF style message.
-  *              The caller is responsible for ensuring that required fields such as
-  *              "to", "from" and "body" are provided either before or after using
-  *              this function.
-  * @param {object} message - optional message overrides.
-  * @param {boolean} [shortFormat=false] - optional flag to use UMF short form syntax.
-  * @return {object} message - a UMF formatted message.
-  */
-  createMessage(message, shortFormat=false) {
-    if (shortFormat) {
-      return this.createMessageShort(message);
-    }
-    let msg = Object.assign({
-      mid: this.createMessageID(),
-      timestamp: this._getTimeStamp(),
-      version: UMF_VERSION
-    }, message || {});
-    return new Proxy(msg, {
-      get: (obj, prop) => {
-        return prop in shortToLong ? obj[shortToLong[prop]] : obj[prop];
-      },
-      set: (obj, prop, value) => {
-        if (prop in shortToLong) {
-          obj[shortToLong[prop]] = value;
-        } else {
-          obj[prop] = value;
-        }
-        return true;
-      }
-    });
-  }
-
-  /**
-  * @name createMessageShort
-  * @summary createMessage with short fields
-  * @param {object} message - optional message overrides.
-  * @return {object} message - a UMF formatted short-form message.
-  */
-  createMessageShort(message) {
-    let msg = Object.assign({
-      mid: this.createShortMessageID(),
-      ts: this._getTimeStamp(),
-      ver: UMF_VERSION
-    }, message || {});
-    return new Proxy(msg, {
-      get: (obj, prop) => {
-        return prop in longToShort ? obj[longToShort[prop]] : obj[prop];
-      },
-      set: (obj, prop, value) => {
-        if (prop in longToShort) {
-          obj[longToShort[prop]] = value;
-        } else {
-          obj[prop] = value;
-        }
-        return true;
-      }
-    });
-  }
-
-  /**
-  * @name toObject
-  * @param {object} message - message to be converted
-  * @return {object} unproxied message object
-  */
-  toObject(message) {
-    let ret = {};
-    Object.keys(message).forEach(k => ret[k] = message[k]);
-    return ret;
-  }
 
   /**
   * @name toJSON
@@ -130,132 +56,165 @@ class UMFMessage {
   * @return {string} JSON version of message
   */
   toJSON(message) {
-    return Utils.safeJSONStringify(this.toObject(message));
+    return Utils.safeJSONStringify(this.message);
   }
 
   /**
   * @name toShort
   * @summary convert a long message to a short one
-  * @param {object} message - message to be converted
   * @return {object} converted message
   */
-  toShort(message) {
-    let convertedMessage = Object.assign({}, message);
-    Object.keys(longToShort).forEach(longField => {
-      if (longField in convertedMessage) {
-        convertedMessage[longToShort[longField]] = message[longField];
-        delete convertedMessage[longField];
-      }
-    });
-    return convertedMessage;
-  }
-
-  /**
-  * @name toLong
-  * @summary convert a short message to a long one
-  * @param {object} message - message to be converted
-  * @return {object} converted message
-  */
-  toLong(message) {
-    let convertedMessage = Object.assign({}, message);
-    Object.keys(shortToLong).forEach(shortField => {
-      if (shortField in convertedMessage) {
-        convertedMessage[shortToLong[shortField]] = message[shortField];
-        delete convertedMessage[shortField];
-      }
-    });
-    return convertedMessage;
+  toShort() {
+    let message = {};
+    if (this.message['to']) {
+      message['to'] = this.message['to'];
+    }
+    if (this.message['from']) {
+      message['frm'] = this.message['from'];
+    }
+    if (this.message['mid']) {
+      message['mid'] = this.message['mid'];
+    }
+    if (this.message['rmid']) {
+      message['rmid'] = this.message['rmid'];
+    }
+    if (this.message['timestamp']) {
+      message['ts'] = this.message['timestamp'];
+    }
+    if (this.message['version']) {
+      message['ver'] = this.message['version'];
+    }
+    if (this.message['via']) {
+      message['via'] = this.message['via'];
+    }
+    if (this.message['for']) {
+      message['for'] = this.message['for'];
+    }
+    if (this.message['body']) {
+      message.bdy = this.message['body'];
+    }
+    return message;
   }
 
   /**
   * @name validateMessage
   * @summary Validates that a UMF message has required fields
-  * @param {object} message - UMF formatted message
   * @return {boolean} response - returns true is valid otherwise false
   */
-  validateMessage(message) {
-    if ((!message.from && !message.frm) || !message.to || (!message.body && !message.bdy)) {
+  validateMessage() {
+    if (!this.message.from || !this.message.to || !this.message.body) {
       return false;
     } else {
       return true;
     }
   }
-
-  /**
-  * @name getMessageBody
-  * @summary Return the body from a UMF message
-  * @param {object} message - UMF message
-  * @return {object} body - UMF message body
-  */
-  getMessageBody(message) {
-    return Object.assign({}, message.body || message.bdy);
-  }
-
-  /**
-   * @name parseRoute
-   * @summary parses message route strings
-   * @private
-   * @param {string} toValue - string to be parsed
-   * @return {object} object - containing route parameters. If the
-   *                  object contains an error field then the route
-   *                  isn't valid.
-   */
-  parseRoute(toValue) {
-    let serviceName = '';
-    let httpMethod;
-    let apiRoute = '';
-    let error;
-    let urlRoute = toValue;
-    let instance = '';
-    let subID = '';
-
-    let atPos = urlRoute.indexOf('@');
-    if (atPos > -1) {
-      instance = urlRoute.substring(0, atPos);
-      urlRoute = urlRoute.substring(atPos + 1);
-      let segments = instance.split('-');
-      if (segments.length > 0) {
-        instance = segments[0];
-        subID = segments[1];
-      }
-    }
-    let segments = urlRoute.split(':');
-    if (segments.length < 1) {
-      error = 'route field has invalid number of routable segments';
-    } else {
-      if (segments[0].indexOf('http') === 0) {
-        let url = `${segments[0]}:${segments[1]}`;
-        segments.shift();
-        segments[0] = url;
-      }
-      serviceName = segments[0];
-      segments.shift();
-      apiRoute = segments.join(':');
-      let s1 = apiRoute.indexOf('[');
-      if (s1 === 0) {
-        let s2 = apiRoute.indexOf(']');
-        if (s2 < 0) {
-          error = 'route field has ill-formed HTTP method verb in segment';
-        } else {
-          httpMethod = apiRoute.substring(s1 + 1, s2).toLowerCase();
-        }
-        if (!error) {
-          let s3 = httpMethod.length;
-          if (s3 > 0) {
-            apiRoute = apiRoute.substring(s3 + 2, apiRoute.length);
-          }
-        }
-      }
-    }
-    return {
-      instance,
-      subID,
-      serviceName,
-      httpMethod,
-      apiRoute,
-      error
-    };
-  }
 }
 
-module.exports = new UMFMessage();
+function createMessageInstance(message) {
+  let proxy = new Proxy(new UMFMessage(), {
+    get: function(target, name, receiver) {
+      return name in target ?
+        target[name] : target.message[name];
+    },
+    set: (obj, prop, value) => {
+      obj.message[prop] = value;
+      return true;
+    }
+  });
+  if (message.to) {
+    proxy.to = message.to;
+  }
+  if (message.from || message.frm) {
+    proxy.from = message.from || message.frm;
+  }
+  proxy.mid = message.mid || proxy.createMessageID();
+  if (message.rmid) {
+    proxy.rmid = message.rmid;
+  }
+  proxy.timestamp = message.timestamp || message.ts || proxy.getTimeStamp();
+  proxy.version = message.version || message.ver || UMF_VERSION;
+  if (message.via) {
+    proxy.via = message.via;
+  }
+  if (message['for']) {
+    proxy['for'] = message['for'];
+  }
+  if (message.body || message.bdy) {
+    proxy.body = message.body || message.bdy;
+  }
+  return proxy;
+}
+
+/**
+ * @name parseRoute
+ * @summary parses message route strings
+ * @private
+ * @param {string} toValue - string to be parsed
+ * @return {object} object - containing route parameters. If the
+ *                  object contains an error field then the route
+ *                  isn't valid.
+ */
+function parseRoute(toValue) {
+  let serviceName = '';
+  let httpMethod;
+  let apiRoute = '';
+  let error;
+  let urlRoute = toValue;
+  let instance = '';
+  let subID = '';
+
+  let atPos = urlRoute.indexOf('@');
+  if (atPos > -1) {
+    instance = urlRoute.substring(0, atPos);
+    urlRoute = urlRoute.substring(atPos + 1);
+    let segments = instance.split('-');
+    if (segments.length > 0) {
+      instance = segments[0];
+      subID = segments[1];
+    }
+  }
+  let segments = urlRoute.split(':');
+  if (segments.length < 1) {
+    error = 'route field has invalid number of routable segments';
+  } else {
+    if (segments[0].indexOf('http') === 0) {
+      let url = `${segments[0]}:${segments[1]}`;
+      segments.shift();
+      segments[0] = url;
+    }
+    serviceName = segments[0];
+    segments.shift();
+    apiRoute = segments.join(':');
+    let s1 = apiRoute.indexOf('[');
+    if (s1 === 0) {
+      let s2 = apiRoute.indexOf(']');
+      if (s2 < 0) {
+        error = 'route field has ill-formed HTTP method verb in segment';
+      } else {
+        httpMethod = apiRoute.substring(s1 + 1, s2).toLowerCase();
+      }
+      if (!error) {
+        let s3 = httpMethod.length;
+        if (s3 > 0) {
+          apiRoute = apiRoute.substring(s3 + 2, apiRoute.length);
+        }
+      }
+    }
+  }
+  return {
+    instance,
+    subID,
+    serviceName,
+    httpMethod,
+    apiRoute,
+    error
+  };
+}
+
+/**
+* Return an ES6 Proxy object which provides access to message fields.
+*/
+module.exports = {
+  createMessage: createMessageInstance,
+  parseRoute: parseRoute
+};

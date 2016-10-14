@@ -13,33 +13,30 @@ describe('createMessage', () => {
 
   it('should have standard properties', () => {
     let msg = UMFMessage.createMessage({});
-    expect(msg).to.have.property('mid');
-    expect(msg).to.have.property('timestamp');
-    expect(msg).to.have.property('version');
+    expect(msg.mid).to.not.be.undefined;
+    expect(msg.timestamp).to.not.be.undefined;
+    expect(msg.version).to.not.be.undefined;
   });
 
   it('should have standard properties for short messages', () => {
-    let msg = UMFMessage.createMessageShort({});
-    expect(msg).to.have.property('mid');
-    expect(msg).to.have.property('ts');
-    expect(msg).to.have.property('ver');
+    let msg = UMFMessage.createMessage({}).toShort();
+    expect(msg.mid).to.not.be.undefined;
+    expect(msg.ts).to.not.be.undefined;
+    expect(msg.ver).to.not.be.undefined;
   });
 });
 
 describe('message conversion to and from short form', () => {
   it('should convert a short form message to a long form message', () => {
-    let msg = UMFMessage.createMessageShort({
+    let msg = UMFMessage.createMessage({
       to: 'someservice:/',
       frm: 'tester',
       bdy: {
         val: 'some value'
       }
     });
-    let longFormMessage = UMFMessage.toLong(msg);
-    expect(longFormMessage).to.have.property('from');
-    expect(longFormMessage).to.have.property('body');
-    expect(longFormMessage).not.to.have.property('frm');
-    expect(longFormMessage).not.to.have.property('bdy');
+    expect(msg.from).to.not.be.undefined;
+    expect(msg.body).to.not.be.undefined;
   });
   it('should convert a long form message to a short form message', () => {
     let msg = UMFMessage.createMessage({
@@ -49,7 +46,7 @@ describe('message conversion to and from short form', () => {
         val: 'some value'
       }
     });
-    let shortFormMessage = UMFMessage.toShort(msg);
+    let shortFormMessage = msg.toShort();
     expect(shortFormMessage).to.have.property('frm');
     expect(shortFormMessage).to.have.property('bdy');
     expect(shortFormMessage).not.to.have.property('from');
@@ -60,19 +57,19 @@ describe('message conversion to and from short form', () => {
 describe('validateMessage', () => {
   it('should return false if missing from field', () => {
     let msg = UMFMessage.createMessage({});
-    let ret = UMFMessage.validateMessage(msg);
+    let ret = msg.validateMessage();
     expect(ret).to.be.false;
     expect(msg['from']).to.be.undefined;
   });
   it('should return false if missing to field', () => {
     let msg = UMFMessage.createMessage({});
-    let ret = UMFMessage.validateMessage(msg);
+    let ret = msg.validateMessage();
     expect(ret).to.be.false;
     expect(msg['to']).to.be.undefined;
   });
   it('should return false if missing body field', () => {
     let msg = UMFMessage.createMessage({});
-    let ret = UMFMessage.validateMessage(msg);
+    let ret = msg.validateMessage();
     expect(ret).to.be.false;
     expect(msg['body']).to.be.undefined;
   });
@@ -83,7 +80,7 @@ describe('validateMessage', () => {
       from: 'client:/',
       body: {}
     });
-    let ret = UMFMessage.validateMessage(msg);
+    let ret = msg.validateMessage();
     expect(ret).to.be.true;
   });
 });
@@ -119,38 +116,9 @@ describe('parseRoute', () => {
   });
 });
 
-describe('proxied object', () => {
-  it('should return values for long-form keys on short-form message ', () => {
-    let msg = UMFMessage.createMessageShort({
-      to: 'someservice:/',
-      frm: 'tester',
-      bdy: {
-        val: 'some value'
-      }
-    });
-    expect(msg.frm).to.equal(msg.from);
-    expect(msg.bdy).to.equal(msg.body);
-    expect(msg.ts).to.equal(msg.timestamp);
-    expect(msg.ver).to.equal(msg.version);
-  });
-
-  it('should return values for short-form keys on long-form message', () => {
-    let msg = UMFMessage.createMessage({
-      to: 'someservice:/',
-      from: 'tester',
-      body: {
-        val: 'some value'
-      }
-    });
-    expect(msg.from).to.equal(msg.frm);
-    expect(msg.body).to.equal(msg.bdy);
-    expect(msg.timestamp).to.equal(msg.ts);
-    expect(msg.version).to.equal(msg.ver);
-  });
-});
 
 describe('toJSON', () => {
-  it('should return long-form keys in JSON for a long-form message', () => {
+  it('should return valid JSON for message', () => {
     let msg = UMFMessage.createMessage({
       to: 'someservice:/',
       from: 'tester',
@@ -158,21 +126,9 @@ describe('toJSON', () => {
         val: 'some value'
       }
     });
-    let json = UMFMessage.toJSON(msg);
+    let json = msg.toJSON(msg);
     let parsed = Utils.safeJSONParse(json);
     expect(parsed).to.have.property('from');
-  });
-  it('should return short-form keys in JSON for a short-form message', () => {
-    let msg = UMFMessage.createMessageShort({
-      to: 'someservice:/',
-      frm: 'tester',
-      bdy: {
-        val: 'some value'
-      }
-    });
-    let json = UMFMessage.toJSON(msg);
-    let parsed = Utils.safeJSONParse(json);
-    expect(parsed).to.have.property('frm');
   });
 
 });
