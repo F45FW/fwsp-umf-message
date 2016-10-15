@@ -87,11 +87,11 @@ class UMFMessage {
     if (this.message['via']) {
       message['via'] = this.message['via'];
     }
-    if (this.message['for']) {
-      message['for'] = this.message['for'];
+    if (this.message['forward']) {
+      message['for'] = this.message['forward'];
     }
     if (this.message['body']) {
-      message.bdy = this.message['body'];
+      message['bdy'] = this.message['body'];
     }
     return message;
   }
@@ -136,8 +136,8 @@ function createMessageInstance(message) {
   if (message.via) {
     proxy.via = message.via;
   }
-  if (message['for']) {
-    proxy['for'] = message['for'];
+  if (message.forward) {
+    proxy.forward = message.forward;
   }
   if (message.body || message.bdy) {
     proxy.body = message.body || message.bdy;
