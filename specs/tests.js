@@ -54,22 +54,22 @@ describe('message conversion to and from short form', () => {
   });
 });
 
-describe('validateMessage', () => {
+describe('validate', () => {
   it('should return false if missing from field', () => {
     let msg = UMFMessage.createMessage({});
-    let ret = msg.validateMessage();
+    let ret = msg.validate();
     expect(ret).to.be.false;
     expect(msg['from']).to.be.undefined;
   });
   it('should return false if missing to field', () => {
     let msg = UMFMessage.createMessage({});
-    let ret = msg.validateMessage();
+    let ret = msg.validate();
     expect(ret).to.be.false;
     expect(msg['to']).to.be.undefined;
   });
   it('should return false if missing body field', () => {
     let msg = UMFMessage.createMessage({});
-    let ret = msg.validateMessage();
+    let ret = msg.validate();
     expect(ret).to.be.false;
     expect(msg['body']).to.be.undefined;
   });
@@ -80,7 +80,7 @@ describe('validateMessage', () => {
       from: 'client:/',
       body: {}
     });
-    let ret = msg.validateMessage();
+    let ret = msg.validate();
     expect(ret).to.be.true;
   });
 });
@@ -126,8 +126,7 @@ describe('toJSON', () => {
         val: 'some value'
       }
     });
-    let json = msg.toJSON(msg);
-    let parsed = Utils.safeJSONParse(json);
-    expect(parsed).to.have.property('from');
+    let json = msg.toJSON();
+    expect(json).to.have.property('from');
   });
 });
