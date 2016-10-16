@@ -29,16 +29,10 @@ msg.to = 'router:/';
 console.log('msg.to', msg.to);
 ```
 
-To retrieve an entire message object using:
+To retrieve an entire message object use:
 
 ```javascript
-console.log(msg.getMessage());
-```
-
-And you get get a JSON string using:
-
-```javascript
-console.log(msg.toJSON())
+console.log(msg.toJSON());
 ```
 
 ## Tests

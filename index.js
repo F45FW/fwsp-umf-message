@@ -1,8 +1,6 @@
 'use strict';
 
-const moment = require('moment');
 const uuid = require('uuid');
-const Utils = require('fwsp-jsutils');
 
 const UMF_VERSION = 'UMF/1.4.3';
 const UMF_INVALID_MESSAGE = 'UMF message requires "to", "from" and "body" fields';
@@ -14,21 +12,12 @@ class UMFMessage {
   }
 
   /**
-  * @name getMessage
-  * @summary Returns a plain-old JavaScript object
-  * @return {object} obj - a Plain old JavaScript Object.
-  */
-  getMessage() {
-    return Object.assign({}, this.message);
-  }
-
-  /**
   * @name getTimeStamp
   * @summary retrieve an ISO 8601 timestamp
   * @return {string} timestamp - ISO 8601 timestamp
   */
   getTimeStamp() {
-    return moment().toISOString();
+    return new Date().toISOString();
   }
 
   /**
@@ -43,20 +32,20 @@ class UMFMessage {
   /**
   * @name createShortMessageID
   * @summary Returns a short form UUID for use with messages
-  * @return {string} uuid - UUID
+   @see https://en.wikipedia.org/wiki/Base36
+  * @return {string} short identifer
   */
   createShortMessageID() {
-    return Utils.shortID();
+    return (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString(36);
   }
 
 
   /**
   * @name toJSON
-  * @param {object} message - message to be converted
-  * @return {string} JSON version of message
+  * @return {object} A JSON stringifiable version of message
   */
-  toJSON(message) {
-    return Utils.safeJSONStringify(this.message);
+  toJSON() {
+    return this.message;
   }
 
   /**
@@ -97,11 +86,11 @@ class UMFMessage {
   }
 
   /**
-  * @name validateMessage
+  * @name validate
   * @summary Validates that a UMF message has required fields
   * @return {boolean} response - returns true is valid otherwise false
   */
-  validateMessage() {
+  validate() {
     if (!this.message.from || !this.message.to || !this.message.body) {
       return false;
     } else {

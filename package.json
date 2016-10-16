@@ -1,6 +1,6 @@
 {
   "name": "fwsp-umf-message",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "umf-message: a tool for creating and working with UMF style messages",
   "author": "Carlos Justiniano",
   "analyze": false,
@@ -12,8 +12,6 @@
     "test": "mocha specs --reporter spec"
   },
   "dependencies": {
-    "fwsp-jsutils": "1.0.8",
-    "moment": "2.14.1",
     "uuid": "2.0.2"
   },
   "devDependencies": {
