@@ -2,7 +2,6 @@
 
 require('./helpers/chai.js');
 
-const Utils = require('fwsp-jsutils');
 const UMFMessage = require('../index.js');
 
 describe('createMessage', () => {
