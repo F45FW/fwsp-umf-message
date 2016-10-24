@@ -82,6 +82,9 @@ class UMFMessage {
     if (this.message['body']) {
       message['bdy'] = this.message['body'];
     }
+    if (this.message['authorization']) {
+      message['aut'] = this.message['authorization'];
+    }
     return message;
   }
 
@@ -130,6 +133,9 @@ function createMessageInstance(message) {
   }
   if (message.body || message.bdy) {
     proxy.body = message.body || message.bdy;
+  }
+  if (message.authorization || message.aut) {
+    proxy.authorization = message.authorization || message.aut;
   }
   return proxy;
 }
