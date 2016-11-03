@@ -24,6 +24,7 @@
   "bin": {
     "fwsp-umf-message": "index.js"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flywheelsports/fwsp-umf-message.git"
