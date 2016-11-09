@@ -70,6 +70,9 @@ class UMFMessage {
     if (this.message['timestamp']) {
       message['ts'] = this.message['timestamp'];
     }
+    if (this.message['type']) {
+      message['typ'] = this.message['type'];
+    }
     if (this.message['version']) {
       message['ver'] = this.message['version'];
     }
@@ -77,7 +80,7 @@ class UMFMessage {
       message['via'] = this.message['via'];
     }
     if (this.message['forward']) {
-      message['for'] = this.message['forward'];
+      message['fwd'] = this.message['forward'];
     }
     if (this.message['body']) {
       message['bdy'] = this.message['body'];
@@ -124,12 +127,15 @@ function createMessageInstance(message) {
     proxy.rmid = message.rmid;
   }
   proxy.timestamp = message.timestamp || message.ts || proxy.getTimeStamp();
+  if (message.type || message.typ) {
+    proxy.type = message.type || message.typ;
+  }
   proxy.version = message.version || message.ver || UMF_VERSION;
   if (message.via) {
     proxy.via = message.via;
   }
-  if (message.forward) {
-    proxy.forward = message.forward;
+  if (message.forward || message.fwd) {
+    proxy.forward = message.forward || message.fwd;
   }
   if (message.body || message.bdy) {
     proxy.body = message.body || message.bdy;
