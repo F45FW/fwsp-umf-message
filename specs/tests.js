@@ -25,6 +25,46 @@ describe('createMessage', () => {
   });
 });
 
+describe('createMessage with all properties', () => {
+  let msg = UMFMessage.createMessage({
+    to: 'someservice:/',
+    from: 'tester',
+    type: 'type',
+    rmid: 'rmid',
+    via: 'via',
+    forward: 'forward',
+    authorization: 'auth',
+    body: {}
+  });
+  it('should have all long-form properties', () => {
+    expect(msg.mid).to.not.be.undefined;
+    expect(msg.timestamp).to.not.be.undefined;
+    expect(msg.version).to.not.be.undefined;
+    expect(msg.to).to.not.be.undefined;
+    expect(msg.from).to.not.be.undefined;
+    expect(msg.type).to.not.be.undefined;
+    expect(msg.rmid).to.not.be.undefined;
+    expect(msg.via).to.not.be.undefined;
+    expect(msg.forward).to.not.be.undefined;
+    expect(msg.authorization).to.not.be.undefined;
+    expect(msg.body).to.not.be.undefined;
+  });
+  let shortFormMessage = msg.toShort();
+  it('should have all short-form properties', () => {
+    expect(shortFormMessage.mid).to.not.be.undefined;
+    expect(shortFormMessage.ts).to.not.be.undefined;
+    expect(shortFormMessage.ver).to.not.be.undefined;
+    expect(shortFormMessage.to).to.not.be.undefined;
+    expect(shortFormMessage.frm).to.not.be.undefined;
+    expect(shortFormMessage.typ).to.not.be.undefined;
+    expect(shortFormMessage.rmid).to.not.be.undefined;
+    expect(shortFormMessage.via).to.not.be.undefined;
+    expect(shortFormMessage.fwd).to.not.be.undefined;
+    expect(shortFormMessage.aut).to.not.be.undefined;
+    expect(shortFormMessage.bdy).to.not.be.undefined;
+  });
+});
+
 describe('message conversion to and from short form', () => {
   it('should convert a short form message to a long form message', () => {
     let msg = UMFMessage.createMessage({
