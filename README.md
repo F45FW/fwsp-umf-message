@@ -6,7 +6,7 @@ Used to create and validate [UMF](https://github.com/cjus/umf) style messages.
 You can install it via NPM:
 
 ```shell
-$ npm -i fwsp-umf-message
+$ npm install fwsp-umf-message --save
 ```
 
 ## Usage
