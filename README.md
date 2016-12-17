@@ -1,4 +1,6 @@
-# UMF Message [![Build Status](https://travis-ci.org/flywheelsports/fwsp-umf-message.svg?branch=master)](https://travis-ci.org/flywheelsports/fwsp-umf-message) [![npm version](https://badge.fury.io/js/fwsp-umf-message.svg)](https://badge.fury.io/js/fwsp-umf-message) <span class="badge-npmdownloads"><a href="https://npmjs.org/package/fwsp-umf-message" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/fwsp-umf-message.svg" alt="NPM downloads" /></a></span>
+# UMF Message 
+
+[![Build Status](https://travis-ci.org/flywheelsports/fwsp-umf-message.svg?branch=master)](https://travis-ci.org/flywheelsports/fwsp-umf-message) [![npm version](https://badge.fury.io/js/fwsp-umf-message.svg)](https://badge.fury.io/js/fwsp-umf-message) <span class="badge-npmdownloads"><a href="https://npmjs.org/package/fwsp-umf-message" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/fwsp-umf-message.svg" alt="NPM downloads" /></a></span> [![npm](https://img.shields.io/npm/l/fwsp-umf-message)]() 
 
 Used to create and validate [UMF](https://github.com/cjus/umf) style messages.
 
