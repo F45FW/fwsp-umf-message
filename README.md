@@ -1,4 +1,5 @@
-# UMF Message [![Build Status](https://travis-ci.org/flywheelsports/fwsp-umf-message.svg?branch=master)](https://travis-ci.org/flywheelsports/fwsp-umf-message)
+# UMF Message [![Build Status](https://travis-ci.org/flywheelsports/fwsp-umf-message.svg?branch=master)](https://travis-ci.org/flywheelsports/fwsp-umf-message) [![npm version](https://badge.fury.io/js/fwsp-umf-message.svg)](https://badge.fury.io/js/fwsp-umf-message) 
+
 Used to create and validate [UMF](https://github.com/cjus/umf) style messages.
 
 ## Install
